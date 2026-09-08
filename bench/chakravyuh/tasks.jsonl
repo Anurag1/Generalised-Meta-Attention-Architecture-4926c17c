@@ -1,0 +1,5 @@
+{"id":"hidden_dependency_001","type":"hidden_dependency","state":{"nodes":["A","B","D"],"edges":[["A","B"],["?","D"]]},"goal":"Identify the missing dependency required to reach D.","hidden_solution":"B->C->D","verification":{"type":"path_exists","requires":["A->B","B->C","C->D"]}}
+{"id":"contradiction_001","type":"contradictory_evidence","hypotheses":["H1","H2"],"evidence":["E1 supports H1","E2 supports H2"],"goal":"Select the next observation that best distinguishes H1 from H2.","verification":{"type":"discriminating_observation"}}
+{"id":"false_exit_001","type":"false_exit","goal":"Produce a solution that passes a withheld test rather than only the visible examples.","verification":{"type":"hidden_test"}}
+{"id":"dynamic_001","type":"dynamic_environment","goal":"Reach the goal while the transition graph changes after actions.","verification":{"type":"state_transition_replay"}}
+{"id":"unknown_depth_001","type":"unknown_depth","goal":"Determine when sufficient structure has been discovered to justify an exit.","verification":{"type":"independent_recheck"}}

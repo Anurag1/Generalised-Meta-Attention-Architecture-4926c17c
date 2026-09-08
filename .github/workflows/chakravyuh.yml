@@ -1,0 +1,37 @@
+name: CHAKRAVYUH
+
+on:
+  push:
+    branches: [main, 'feat/chakravyuh-bench']
+  pull_request:
+    paths:
+      - 'bench/chakravyuh/**'
+      - 'research/CHAKRAVYUH.md'
+      - '.github/workflows/chakravyuh.yml'
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install test runner
+        run: python -m pip install --upgrade pip pytest
+      - name: Run CHAKRAVYUH tests
+        run: pytest -q bench/chakravyuh/test_controller.py bench/chakravyuh/test_runner.py
+      - name: Run deterministic four-policy smoke benchmark
+        run: python bench/chakravyuh/runner.py
+      - name: Validate benchmark JSONL
+        run: python - <<'PY'
+import json
+from pathlib import Path
+p = Path('bench/chakravyuh/tasks.jsonl')
+rows = [json.loads(x) for x in p.read_text().splitlines() if x.strip()]
+assert rows, 'benchmark must contain at least one task'
+required = {'id', 'type'}
+for row in rows:
+    assert required <= row.keys(), row
+print(f'validated {len(rows)} benchmark tasks')
+PY
