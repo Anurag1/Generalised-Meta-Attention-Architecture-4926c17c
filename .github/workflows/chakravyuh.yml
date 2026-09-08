@@ -17,9 +17,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Run controller tests
-        working-directory: bench/chakravyuh
-        run: python -m unittest -v test_controller.py
+      - name: Install test runner
+        run: python -m pip install --upgrade pip pytest
+      - name: Run CHAKRAVYUH tests
+        run: pytest -q bench/chakravyuh/test_controller.py bench/chakravyuh/test_runner.py
+      - name: Run deterministic four-policy smoke benchmark
+        run: python bench/chakravyuh/runner.py
       - name: Validate benchmark JSONL
         run: python - <<'PY'
 import json
