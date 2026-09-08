@@ -1,0 +1,34 @@
+name: CHAKRAVYUH
+
+on:
+  push:
+    branches: [main, 'feat/chakravyuh-bench']
+  pull_request:
+    paths:
+      - 'bench/chakravyuh/**'
+      - 'research/CHAKRAVYUH.md'
+      - '.github/workflows/chakravyuh.yml'
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run controller tests
+        working-directory: bench/chakravyuh
+        run: python -m unittest -v test_controller.py
+      - name: Validate benchmark JSONL
+        run: python - <<'PY'
+import json
+from pathlib import Path
+p = Path('bench/chakravyuh/tasks.jsonl')
+rows = [json.loads(x) for x in p.read_text().splitlines() if x.strip()]
+assert rows, 'benchmark must contain at least one task'
+required = {'id', 'type'}
+for row in rows:
+    assert required <= row.keys(), row
+print(f'validated {len(rows)} benchmark tasks')
+PY
