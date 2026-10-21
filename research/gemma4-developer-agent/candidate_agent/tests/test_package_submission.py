@@ -73,6 +73,19 @@ class PackageSubmissionTests(unittest.TestCase):
             self.assertTrue(any("unsupported competition model" in e
                                 for e in packager.validate_tree(root)))
 
+    def test_mixed_models_across_agents_are_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "candidate"
+            self.make_candidate(root)
+            subagents = root / "sub_agents"
+            subagents.mkdir()
+            (subagents / "helper.yaml").write_text(
+                "name: helper\\nmodel: gemma-4-e2b-it-qat-w4a16-ct\\n",
+                encoding="utf-8",
+            )
+            self.assertTrue(any("mixed base models are not allowed" in e
+                                for e in packager.validate_tree(root)))
+
     def test_supported_smaller_model_is_accepted(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp) / "candidate"
