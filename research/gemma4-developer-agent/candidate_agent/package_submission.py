@@ -62,7 +62,7 @@ def validate_tree(root: Path) -> list[str]:
             if config_path == agent_path:
                 continue
             config_text = config_path.read_text(encoding="utf-8")
-            for configured_model in re.findall(r"(?m)^model:\\s*([^\\s#]+)", config_text):
+            for configured_model in re.findall(r"(?m)^model:\s*([^\s#]+)", config_text):
                 configured_model = configured_model.strip("'\\\"")
                 if configured_model not in ALLOWED_MODELS:
                     errors.append(f"unsupported competition model in {config_path.relative_to(root)}: {configured_model}")
