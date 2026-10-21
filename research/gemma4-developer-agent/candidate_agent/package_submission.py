@@ -13,7 +13,7 @@ import sys
 import zipfile
 from pathlib import Path, PurePosixPath
 
-# The official competition overview currently requires this exact model.
+# Model variants announced by Kaggle staff; all agents/subagents in one submission must agree.
 ALLOWED_MODELS = {
     "gemma-4-31b-it-qat-w4a16-ct",
     "gemma-4-12b-it-qat-w4a16-ct",
@@ -51,11 +51,26 @@ def validate_tree(root: Path) -> list[str]:
         model_match = re.search(r"(?m)^model:\s*([^\s#]+)", agent_text)
         if not model_match:
             errors.append("agent.yaml must declare a top-level model")
-        elif model_match.group(1).strip("'\"") not in ALLOWED_MODELS:
+        elif model_match.group(1).strip("'\\\"") not in ALLOWED_MODELS:
             errors.append(
                 "unsupported competition model; allowed models: " + ", ".join(sorted(ALLOWED_MODELS)) + "; "
                 f"found {model_match.group(1)}"
             )
+
+        root_model = model_match.group(1).strip("'\\\"") if model_match else None
+        for config_path in sorted(root.rglob("*.yaml")) + sorted(root.rglob("*.yml")):
+            if config_path == agent_path:
+                continue
+            config_text = config_path.read_text(encoding="utf-8")
+            for configured_model in re.findall(r"(?m)^model:\\s*([^\\s#]+)", config_text):
+                configured_model = configured_model.strip("'\\\"")
+                if configured_model not in ALLOWED_MODELS:
+                    errors.append(f"unsupported competition model in {config_path.relative_to(root)}: {configured_model}")
+                elif root_model and configured_model != root_model:
+                    errors.append(
+                        f"mixed base models are not allowed: agent.yaml uses {root_model}, "
+                        f"{config_path.relative_to(root)} uses {configured_model}"
+                    )
 
         for included in re.findall(r"!include\s+([^\s#]+)", agent_text):
             if not _safe_relative(included):
