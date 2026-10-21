@@ -9,7 +9,8 @@
 - Added six synthetic unit tests for the prototype; an earlier local run passed (6/6).
 - Added a candidate ADK agent configuration, evidence-first system prompt, sampling configuration, and graph-retrieval skill.
 - Added three synthetic smoke tests for the retrieval skill; an earlier local run passed (3/3).
-- Added `package_submission.py` to check required files, `!include` paths, skill manifest frontmatter, exact competition model identifier, Python syntax, ZIP root layout, runtime-only archive contents, ZIP integrity, and SHA-256 manifest.
+- Added `package_submission.py` to check required files, `!include` paths, skill manifest frontmatter, currently supported competition model variants, Python syntax, ZIP root layout, runtime-only archive contents, ZIP integrity, and SHA-256 manifest.
+- Updated the offline validator and packaging tests to accept all four Gemma 4 variants announced in the latest official Kaggle staff notice (`31b`, `12b`, `e4b`, `e2b`) while still rejecting unsupported identifiers. The candidate configuration remains on `gemma-4-31b-it-qat-w4a16-ct`.
 - Added five synthetic packaging tests for required structure, missing files, archive contents/checksums, wrong model, and missing skill frontmatter.
 - Updated GitHub Actions to run the tests and package validator.
 
@@ -35,4 +36,4 @@
 - Prototype: https://github.com/Anurag1/Generalised-Meta-Attention-Architecture-4926c17c/tree/gemma4-submission-prep/research/gemma4-developer-agent/prototype
 
 ## Important limitations
-The synthetic tests do not establish competition performance gains. The official compiler/harness has not been run against this configuration; GitHub Actions has not produced a verifiable test execution for the latest commit; no real-Gemma benchmark has been run; and no Kaggle submission has been made. This workflow does not have an available Kaggle action for accepting rules, launching the official notebook runtime, or submitting a Writeup.
+The model allowlist reflects the latest official staff announcement available during this update; verify the live rules again before final submission. The synthetic tests do not establish competition performance gains. The official compiler/harness has not been run against this configuration; GitHub Actions has not produced a verifiable test execution for the latest commit; no real-Gemma benchmark has been run; and no Kaggle submission has been made. This workflow does not have an available Kaggle action for accepting rules, launching the official notebook runtime, or submitting a Writeup.
