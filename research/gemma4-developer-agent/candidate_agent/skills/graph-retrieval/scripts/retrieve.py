@@ -1,12 +1,13 @@
 """Offline issue-to-file retrieval for the competition repository sandbox."""
 import ast
 import json
+import os
 import re
 import sys
 from collections import defaultdict
 from pathlib import Path
 
-ROOT = Path("/workspace")
+ROOT = Path(os.environ.get("GEMMA4_REPO_ROOT", "/workspace"))
 STOP = {"about", "after", "again", "also", "been", "before", "being", "between", "could", "does", "from", "have", "into", "issue", "just", "more", "most", "other", "should", "that", "their", "there", "these", "they", "this", "those", "the", "through", "under", "using", "when", "where", "which", "while", "with", "would"}
 
 def tokens(text):
