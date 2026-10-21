@@ -18,7 +18,7 @@ python package_submission.py --output /tmp/submission.zip
 python package_submission.py --validate-zip /tmp/submission.zip
 ```
 
-The archive places `agent.yaml` at its root, includes the referenced prompt/config/skill files, and records SHA-256 hashes in `MANIFEST.sha256`. The script checks required files, simple `!include` paths, skill paths, currently supported model identifiers, Python syntax, ZIP integrity, and checksums.
+The archive places `agent.yaml` at its root, includes the referenced prompt/config/skill files, and records SHA-256 hashes in `MANIFEST.sha256`. The script checks required files, simple `!include` paths, skill paths, currently supported model identifiers, cross-agent model consistency, Python syntax, ZIP integrity, and checksums. All agents/subagents in one package must use the same base model; compare variants in separate benchmark packages.
 
 Run tests with:
 
