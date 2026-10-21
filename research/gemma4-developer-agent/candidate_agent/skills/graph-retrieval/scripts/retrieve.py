@@ -17,7 +17,7 @@ def main():
     query = " ".join(sys.argv[1:]).strip()
     if not query:
         print(json.dumps({"error": "pass the issue description as an argument", "results": []}))
-        return 2
+        return 0
     if not ROOT.is_dir():
         print(json.dumps({"error": "/workspace is not available in this skill runtime", "results": []}))
         return 0
