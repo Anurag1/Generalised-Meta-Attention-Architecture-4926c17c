@@ -9,7 +9,8 @@
 - Added six synthetic unit tests for the prototype; an earlier local run passed (6/6).
 - Added a candidate ADK agent configuration, evidence-first system prompt, sampling configuration, and graph-retrieval skill.
 - Added three synthetic smoke tests for the retrieval skill; an earlier local run passed (3/3).
-- Added `package_submission.py` to check required files, `!include` paths, skill manifest frontmatter, currently supported competition model variants, Python syntax, ZIP root layout, runtime-only archive contents, ZIP integrity, and SHA-256 manifest.
+- Added `package_submission.py` to check required files, `!include` paths, skill manifest frontmatter, supported model identifiers and cross-agent model consistency, Python syntax, ZIP root layout, runtime-only archive contents, ZIP integrity, and SHA-256 manifest.
+- Added a regression test that rejects mixed base models across root and subagent configs, matching Kaggle's rule that each submission must use one consistent variant.
 - Updated the offline validator and packaging tests to accept all four Gemma 4 variants announced in the latest official Kaggle staff notice (`31b`, `12b`, `e4b`, `e2b`) while still rejecting unsupported identifiers. The candidate configuration remains on `gemma-4-31b-it-qat-w4a16-ct`.
 - Added five synthetic packaging tests for required structure, missing files, archive contents/checksums, wrong model, and missing skill frontmatter.
 - Updated GitHub Actions to run the tests and package validator.
