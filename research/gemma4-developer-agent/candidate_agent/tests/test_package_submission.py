@@ -69,9 +69,19 @@ class PackageSubmissionTests(unittest.TestCase):
             self.make_candidate(root)
             path = root / "agent.yaml"
             path.write_text(path.read_text().replace(
-                "gemma-4-31b-it-qat-w4a16-ct", "gemma-4-12b-it-qat-w4a16-ct"), encoding="utf-8")
-            self.assertTrue(any("requires model gemma-4-31b-it-qat-w4a16-ct" in e
+                "gemma-4-31b-it-qat-w4a16-ct", "gemma-4-999b-unsupported"), encoding="utf-8")
+            self.assertTrue(any("unsupported competition model" in e
                                 for e in packager.validate_tree(root)))
+
+    def test_supported_smaller_model_is_accepted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "candidate"
+            self.make_candidate(root)
+            path = root / "agent.yaml"
+            path.write_text(path.read_text().replace(
+                "gemma-4-31b-it-qat-w4a16-ct", "gemma-4-e4b-it-qat-w4a16-ct"),
+                encoding="utf-8")
+            self.assertEqual([], packager.validate_tree(root))
 
     def test_skill_manifest_requires_frontmatter_name(self):
         with tempfile.TemporaryDirectory() as tmp:
