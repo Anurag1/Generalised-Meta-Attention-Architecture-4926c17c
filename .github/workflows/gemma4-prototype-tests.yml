@@ -24,6 +24,11 @@ jobs:
       - name: Test retrieval prototype
         working-directory: research/gemma4-developer-agent/prototype
         run: PYTHONPATH=. python -m unittest discover -s tests -v
-      - name: Test packaged skill
+      - name: Test candidate agent and packager
         working-directory: research/gemma4-developer-agent/candidate_agent
         run: python -m unittest discover -s tests -v
+      - name: Build and verify candidate ZIP
+        working-directory: research/gemma4-developer-agent/candidate_agent
+        run: |
+          python package_submission.py --output /tmp/submission.zip
+          python package_submission.py --validate-zip /tmp/submission.zip
