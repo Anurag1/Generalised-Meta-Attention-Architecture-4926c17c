@@ -18,13 +18,19 @@ class PackageSubmissionTests(unittest.TestCase):
             ),
             "prompts/system.md": "Use evidence.\n",
             "configs/sampling.yaml": "temperature: 0.1\n",
-            "skills/graph-retrieval/SKILL.md": "Retrieve relevant files.\n",
+            "skills/graph-retrieval/SKILL.md": (
+                "---\nname: graph-retrieval\ndescription: retrieve files\n---\n"
+                "Retrieve relevant files.\n"
+            ),
             "skills/graph-retrieval/scripts/retrieve.py": "print('ok')\n",
+            "tests/test_example.py": "def test_example(): pass\n",
+            "package_submission.py": "# development-only\n",
+            "README.md": "# development notes\n",
         }
-        for rel, content in files.items():
+        for rel, text in files.items():
             path = root / rel
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(content, encoding="utf-8")
+            path.write_text(text, encoding="utf-8")
 
     def test_valid_candidate_tree(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -40,7 +46,7 @@ class PackageSubmissionTests(unittest.TestCase):
             self.assertTrue(any("missing required file" in e or "unresolved !include" in e
                                 for e in packager.validate_tree(root)))
 
-    def test_archive_has_agent_at_root_and_checksums(self):
+    def test_archive_root_manifest_and_dev_files(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp) / "candidate"
             root.mkdir()
@@ -49,8 +55,13 @@ class PackageSubmissionTests(unittest.TestCase):
             packager.build_zip(root, output)
             self.assertEqual([], packager.validate_zip(output))
             with zipfile.ZipFile(output) as archive:
-                self.assertIn("agent.yaml", archive.namelist())
-                self.assertNotIn("candidate/agent.yaml", archive.namelist())
+                names = set(archive.namelist())
+                self.assertIn("agent.yaml", names)
+                self.assertNotIn("candidate/agent.yaml", names)
+                self.assertNotIn("tests/test_example.py", names)
+                self.assertNotIn("package_submission.py", names)
+                self.assertNotIn("README.md", names)
+                self.assertIn("skills/graph-retrieval/SKILL.md", names)
 
     def test_wrong_model_fails(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -58,8 +69,17 @@ class PackageSubmissionTests(unittest.TestCase):
             self.make_candidate(root)
             path = root / "agent.yaml"
             path.write_text(path.read_text().replace(
-                "gemma-4-31b-it-qat-w4a16-ct", "not-a-gemma-model"), encoding="utf-8")
-            self.assertTrue(any("unsupported model" in e for e in packager.validate_tree(root)))
+                "gemma-4-31b-it-qat-w4a16-ct", "gemma-4-12b-it-qat-w4a16-ct"), encoding="utf-8")
+            self.assertTrue(any("requires model gemma-4-31b-it-qat-w4a16-ct" in e
+                                for e in packager.validate_tree(root)))
+
+    def test_skill_manifest_requires_frontmatter_name(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "candidate"
+            self.make_candidate(root)
+            (root / "skills/graph-retrieval/SKILL.md").write_text(
+                "No YAML frontmatter here\n", encoding="utf-8")
+            self.assertTrue(any("frontmatter" in e for e in packager.validate_tree(root)))
 
 
 if __name__ == "__main__":
