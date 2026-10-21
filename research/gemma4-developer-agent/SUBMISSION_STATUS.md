@@ -12,12 +12,12 @@
 - Added `package_submission.py` to check required files, `!include` paths, skill manifest frontmatter, supported model identifiers and cross-agent model consistency, Python syntax, ZIP root layout, runtime-only archive contents, ZIP integrity, and SHA-256 manifest.
 - Added a regression test that rejects mixed base models across root and subagent configs, matching Kaggle's rule that each submission must use one consistent variant.
 - Updated the offline validator and packaging tests to accept all four Gemma 4 variants announced in the latest official Kaggle staff notice (`31b`, `12b`, `e4b`, `e2b`) while still rejecting unsupported identifiers. The candidate configuration remains on `gemma-4-31b-it-qat-w4a16-ct`.
-- Added five synthetic packaging tests for required structure, missing files, archive contents/checksums, wrong model, and missing skill frontmatter.
+- Added six synthetic packaging tests covering required structure, missing files, archive contents/checksums, unsupported model, mixed models across subagents, supported smaller model, and missing skill frontmatter.
 - Updated GitHub Actions to run the tests and package validator.
 
 ## Latest CI evidence
-- The latest observed run for the candidate workflow is linked here: https://github.com/Anurag1/Generalised-Meta-Attention-Architecture-4926c17c/actions/runs/39577497628
-- GitHub reports that run as failed. A rerun also failed before any steps were recorded (the job had no assigned runner and no step log). This is **not evidence that the tests themselves failed or passed**; the workflow runner has not executed the suite in a verifiable way.
+- The latest observed run for the candidate workflow is linked here: https://github.com/Anurag1/Generalised-Meta-Attention-Architecture-4926c17c/actions/runs/39578409345
+- The latest run failed before any steps were recorded: the job has no assigned runner and no step log. This pattern is also visible in other workflows on the same repository, suggesting a repository/account/runner availability issue rather than a failure inside this test suite. This is **not evidence that the tests themselves failed or passed**; the suite remains unverified.
 - The workflow status must remain unverified until GitHub Actions produces a job with actual executed steps and a completed result.
 
 ## Blocking items
