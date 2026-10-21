@@ -14,7 +14,12 @@ import zipfile
 from pathlib import Path, PurePosixPath
 
 # The official competition overview currently requires this exact model.
-ALLOWED_MODELS = {"gemma-4-31b-it-qat-w4a16-ct"}
+ALLOWED_MODELS = {
+    "gemma-4-31b-it-qat-w4a16-ct",
+    "gemma-4-12b-it-qat-w4a16-ct",
+    "gemma-4-e4b-it-qat-w4a16-ct",
+    "gemma-4-e2b-it-qat-w4a16-ct",
+}
 REQUIRED_FILES = (
     Path("agent.yaml"),
     Path("prompts/system.md"),
@@ -48,7 +53,7 @@ def validate_tree(root: Path) -> list[str]:
             errors.append("agent.yaml must declare a top-level model")
         elif model_match.group(1).strip("'\"") not in ALLOWED_MODELS:
             errors.append(
-                "competition requires model gemma-4-31b-it-qat-w4a16-ct; "
+                "unsupported competition model; allowed models: " + ", ".join(sorted(ALLOWED_MODELS)) + "; "
                 f"found {model_match.group(1)}"
             )
 
