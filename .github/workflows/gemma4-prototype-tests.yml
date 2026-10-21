@@ -1,0 +1,34 @@
+name: Gemma 4 prototype tests
+
+on:
+  push:
+    branches: [gemma4-submission-prep]
+    paths:
+      - "research/gemma4-developer-agent/prototype/**"
+      - "research/gemma4-developer-agent/candidate_agent/**"
+      - ".github/workflows/gemma4-prototype-tests.yml"
+  pull_request:
+    paths:
+      - "research/gemma4-developer-agent/prototype/**"
+      - "research/gemma4-developer-agent/candidate_agent/**"
+      - ".github/workflows/gemma4-prototype-tests.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Test retrieval prototype
+        working-directory: research/gemma4-developer-agent/prototype
+        run: PYTHONPATH=. python -m unittest discover -s tests -v
+      - name: Test candidate agent and packager
+        working-directory: research/gemma4-developer-agent/candidate_agent
+        run: python -m unittest discover -s tests -v
+      - name: Build and verify candidate ZIP
+        working-directory: research/gemma4-developer-agent/candidate_agent
+        run: |
+          python package_submission.py --output /tmp/submission.zip
+          python package_submission.py --validate-zip /tmp/submission.zip
