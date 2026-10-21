@@ -15,6 +15,9 @@
 - Added six synthetic packaging tests covering required structure, missing files, archive contents/checksums, unsupported model, mixed models across subagents, supported smaller model, and missing skill frontmatter.
 - Updated GitHub Actions to run the tests and package validator.
 
+## Completion gate
+- Full evidence-based execution checklist: [FINISH_GATE.md](FINISH_GATE.md). It defines the access, CI, official-harness, controlled benchmark, write-up, submission, and merge gates. Unchecked items remain incomplete until supported by logs or platform evidence.
+
 ## Latest CI evidence
 - The latest observed run for the candidate workflow is linked here: https://github.com/Anurag1/Generalised-Meta-Attention-Architecture-4926c17c/actions/runs/39578409345
 - The latest run failed before any steps were recorded: the job has no assigned runner and no step log. This pattern is also visible in other workflows on the same repository, suggesting a repository/account/runner availability issue rather than a failure inside this test suite. This is **not evidence that the tests themselves failed or passed**; the suite remains unverified.
