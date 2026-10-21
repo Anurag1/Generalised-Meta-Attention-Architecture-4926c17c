@@ -7,7 +7,7 @@ This is an integration scaffold for the Gemma 4 Developer Agent competition, not
 - `prompts/system.md`: evidence-first repair procedure.
 - `skills/graph-retrieval`: offline Python file ranking using lexical clues and local import edges.
 - `configs/sampling.yaml`: conservative generation settings.
-- `package_submission.py`: deterministic ZIP builder plus offline structural/checksum validator.
+- `package_submission.py`: deterministic ZIP builder plus offline structural/checksum validator. Its model allowlist includes all four variants announced in the latest official Kaggle staff notice; the candidate itself currently selects `gemma-4-31b-it-qat-w4a16-ct`.
 
 ## Build a candidate ZIP
 
@@ -18,7 +18,7 @@ python package_submission.py --output /tmp/submission.zip
 python package_submission.py --validate-zip /tmp/submission.zip
 ```
 
-The archive places `agent.yaml` at its root, includes the referenced prompt/config/skill files, and records SHA-256 hashes in `MANIFEST.sha256`. The script checks required files, simple `!include` paths, skill paths, permitted model identifiers, Python syntax, ZIP integrity, and checksums.
+The archive places `agent.yaml` at its root, includes the referenced prompt/config/skill files, and records SHA-256 hashes in `MANIFEST.sha256`. The script checks required files, simple `!include` paths, skill paths, currently supported model identifiers, Python syntax, ZIP integrity, and checksums.
 
 Run tests with:
 
