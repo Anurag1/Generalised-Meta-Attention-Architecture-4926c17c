@@ -1,0 +1,17 @@
+name: graph_guided_swe
+model: gemma-4-31b-it-qat-w4a16-ct
+description: Resolves software issues with evidence-led repository navigation, minimal edits, and test verification.
+instruction: !include prompts/system.md
+tools:
+  - run_command
+  - read_file
+  - edit_file
+  - write_file
+  - get_status
+  - submit_patch
+  - get_code_neighbors
+  - search_similar_code
+  - get_code_subgraph
+skills:
+  - skills/graph-retrieval
+generate_content_config: !include configs/sampling.yaml
