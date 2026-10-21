@@ -1,0 +1,24 @@
+name: Gemma 4 prototype tests
+
+on:
+  push:
+    branches: [gemma4-submission-prep]
+    paths:
+      - "research/gemma4-developer-agent/prototype/**"
+      - ".github/workflows/gemma4-prototype-tests.yml"
+  pull_request:
+    paths:
+      - "research/gemma4-developer-agent/prototype/**"
+      - ".github/workflows/gemma4-prototype-tests.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run unit tests
+        working-directory: research/gemma4-developer-agent/prototype
+        run: python -m unittest discover -s tests -v
