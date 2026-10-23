@@ -4,9 +4,12 @@ on:
   push:
     branches:
       - witness-engine/benchmark-v0-4
+      - osho-inspired-cognitive-skill/v0-1
     paths:
       - "research/witness_engine_v0_4/**"
+      - "research/osho_cognitive_skill/**"
       - ".github/workflows/witness-engine-benchmark.yml"
+      - "research/osho_cognitive_skill/**"
   pull_request:
     paths:
       - "research/witness_engine_v0_4/**"
@@ -42,6 +45,10 @@ jobs:
         run: python -m unittest discover -s research/witness_engine_v0_4 -p 'test_*.py' -v
       - name: Check benchmark CLI
         run: python research/witness_engine_v0_4/benchmark.py --help
+      - name: Run Osho-inspired cognitive skill tests
+        run: python -m unittest discover -s research/osho_cognitive_skill -p 'test_*.py' -v
+      - name: Run Osho-inspired smoke benchmark
+        run: python research/osho_cognitive_skill/benchmark.py
 
   live-model:
     if: github.event_name == 'workflow_dispatch'
