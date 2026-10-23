@@ -1,0 +1,85 @@
+name: Witness Engine Model Benchmark
+
+on:
+  push:
+    branches:
+      - witness-engine/benchmark-v0-4
+    paths:
+      - "research/witness_engine_v0_4/**"
+      - ".github/workflows/witness-engine-benchmark.yml"
+  pull_request:
+    paths:
+      - "research/witness_engine_v0_4/**"
+      - ".github/workflows/witness-engine-benchmark.yml"
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: "Provider to evaluate"
+        type: choice
+        required: true
+        options:
+          - openai
+          - anthropic
+          - gemini
+      model:
+        description: "Exact provider model ID"
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  unit-tests:
+    if: github.event_name != 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run Witness Engine tests
+        run: python -m unittest research.witness_engine_v0_4.test_witness_engine -v
+      - name: Check benchmark CLI
+        run: python research/witness_engine_v0_4/benchmark.py --help
+
+  live-model:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate selected provider secret
+        env:
+          SELECTED_PROVIDER: ${{ inputs.provider }}
+        run: |
+          case "$SELECTED_PROVIDER" in
+            openai) test -n "$OPENAI_API_KEY" ;;
+            anthropic) test -n "$ANTHROPIC_API_KEY" ;;
+            gemini) test -n "$GEMINI_API_KEY" ;;
+            *) echo "Unsupported provider"; exit 2 ;;
+          esac
+      - name: Run frozen model benchmark
+        env:
+          SELECTED_PROVIDER: ${{ inputs.provider }}
+          SELECTED_MODEL: ${{ inputs.model }}
+        run: |
+          mkdir -p artifacts
+          python research/witness_engine_v0_4/benchmark.py \
+            --provider "$SELECTED_PROVIDER" \
+            --model "$SELECTED_MODEL" \
+            --output artifacts/witness-result.json
+      - name: Upload result artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: witness-engine-${{ inputs.provider }}-${{ inputs.model }}
+          path: artifacts/witness-result.json
+          if-no-files-found: warn
