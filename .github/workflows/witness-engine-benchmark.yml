@@ -39,7 +39,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Run Witness Engine tests
-        run: python -m unittest research.witness_engine_v0_4.test_witness_engine -v
+        run: python -m unittest discover -s research/witness_engine_v0_4 -p 'test_*.py' -v
       - name: Check benchmark CLI
         run: python research/witness_engine_v0_4/benchmark.py --help
 
