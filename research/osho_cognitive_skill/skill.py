@@ -67,13 +67,14 @@ def audit(evidence: list[Evidence], hypotheses: list[Hypothesis] | None = None,
             if left.context.casefold().strip() != right.context.casefold().strip():
                 continue
             a, b = left.text.strip(), right.text.strip()
-            for neg, pos in (("NOT:", "YES:"), ("YES:", "NOT:")):
-                if a.upper().startswith(neg) and b.upper().startswith(pos):
-                    if a[len(neg):].strip().casefold() == b[len(pos):].strip().casefold():
-                        conflicts.append({"left": a, "right": b, "context": left.context})
-                elif a.upper().startswith(pos) and b.upper().startswith(neg):
-                    if a[len(pos):].strip().casefold() == b[len(neg):].strip().casefold():
-                        conflicts.append({"left": a, "right": b, "context": left.context})
+            a_not = a.upper().startswith("NOT:")
+            b_not = b.upper().startswith("NOT:")
+            a_yes = a.upper().startswith("YES:")
+            b_yes = b.upper().startswith("YES:")
+            if a_not and b_yes and a[4:].strip().casefold() == b[4:].strip().casefold():
+                conflicts.append({"left": a, "right": b, "context": left.context})
+            elif a_yes and b_not and a[4:].strip().casefold() == b[4:].strip().casefold():
+                conflicts.append({"left": a, "right": b, "context": left.context})
 
     mean_confidence = sum(e.confidence for e in evidence) / len(evidence) if evidence else 0.0
     uncertainty = round(1.0 - mean_confidence, 3)
