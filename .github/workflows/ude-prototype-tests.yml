@@ -1,0 +1,27 @@
+name: UDE prototype tests
+
+on:
+  push:
+    branches: [ude-discovery-prototype]
+    paths:
+      - "experiments/universal-discovery-engine/**"
+      - ".github/workflows/ude-prototype-tests.yml"
+  pull_request:
+    paths:
+      - "experiments/universal-discovery-engine/**"
+      - ".github/workflows/ude-prototype-tests.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run unit tests
+        working-directory: experiments/universal-discovery-engine
+        run: python -m unittest discover -s tests -v
+      - name: Run end-to-end discovery
+        working-directory: experiments/universal-discovery-engine
+        run: python discovery_engine.py sample_data.csv discovery_report.json
